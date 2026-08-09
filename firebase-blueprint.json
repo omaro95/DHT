@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User account information and settings",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "email"
+      ]
+    },
+    "DayData": {
+      "title": "Day Data",
+      "description": "Day log records including water, meal, restroom, activity logs, and anchor notes",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner user ID"
+        },
+        "date": {
+          "type": "string",
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "waterLogs": {
+          "type": "array"
+        },
+        "mealLogs": {
+          "type": "array"
+        },
+        "restroomLogs": {
+          "type": "array"
+        },
+        "activityLogs": {
+          "type": "array"
+        },
+        "anchorNote": {
+          "type": "object"
+        },
+        "dayNotes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId",
+        "date"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "User profile document"
+    },
+    "/users/{userId}/days/{dateKey}": {
+      "schema": {
+        "$ref": "#/entities/DayData"
+      },
+      "description": "Daily roadmap and tracking log entries for a user"
+    }
+  }
+}

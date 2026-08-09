@@ -1,0 +1,22 @@
+{
+  "short_name": "Temporal",
+  "name": "TEMPORAL - Sun Tracker & Daily Roadmap",
+  "description": "Cascade from Monthly goals to 180° Sun Clock daily tracking logs",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#f59e0b",
+  "display": "standalone",
+  "orientation": "portrait"
+}

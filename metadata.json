@@ -1,0 +1,6 @@
+{
+  "name": "Temporal - Personal Tracker & Sun Roadmap",
+  "description": "Hierarchical temporal tracking roadmap with 180° Sun Clock, anchor day highlighting, water intake, meal timestamps, restroom log, and hourly drill-downs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

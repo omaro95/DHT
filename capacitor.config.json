@@ -1,0 +1,9 @@
+{
+  "appId": "com.temporal.suntracker",
+  "appName": "TEMPORAL Sun Tracker",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
