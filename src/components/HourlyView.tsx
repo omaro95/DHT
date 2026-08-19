@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DayData, ActivityLog, WaterLog, MealLog, RestroomLog } from '../types';
 import { format12Hour } from '../utils/dateUtils';
-import { Clock, Droplets, Utensils, Plus, Trash2, Zap, ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { useSolar } from '../context/SolarContext';
+import { Clock, Droplets, Utensils, Plus, Trash2, Zap, ArrowLeft, Check, Sparkles, Sun, Compass } from 'lucide-react';
 
 interface HourlyViewProps {
   dayData: DayData;
@@ -18,8 +19,17 @@ export const HourlyView: React.FC<HourlyViewProps> = ({
   onUpdateDayData,
   onOpenQuickLog
 }) => {
+  const { getSolarPositionForDate, location } = useSolar();
+
   const formattedHour = format12Hour(`${String(hour).padStart(2, '0')}:00`);
   const nextHourStr = format12Hour(`${String((hour + 1) % 24).padStart(2, '0')}:00`);
+
+  // Calculate Solar Position for this specific hour
+  const hourSolarPos = useMemo(() => {
+    const d = new Date(dayData.date + 'T00:00:00');
+    d.setHours(hour, 30, 0, 0);
+    return getSolarPositionForDate(d);
+  }, [dayData.date, hour, getSolarPositionForDate]);
 
   // Local state for energy level & activity title
   const hourActivities = dayData.activityLogs.filter((a) => a.hour === hour);
@@ -71,11 +81,18 @@ export const HourlyView: React.FC<HourlyViewProps> = ({
               <ArrowLeft className="w-4 h-4" /> Back to Daily Sun Clock
             </button>
 
-            <div className="flex items-center gap-2">
-              <Clock className="w-6 h-6 text-violet-400" />
-              <h2 className="text-2xl font-black text-slate-100">
-                {formattedHour} – {nextHourStr} Slot
-              </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Clock className="w-6 h-6 text-violet-400" />
+                <h2 className="text-2xl font-black text-slate-100">
+                  {formattedHour} – {nextHourStr} Slot
+                </h2>
+              </div>
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                <span>{hourSolarPos.phaseIcon}</span>
+                <span>{hourSolarPos.phaseName}</span>
+                <span className="font-mono opacity-80 font-normal">({hourSolarPos.elevation >= 0 ? `+${hourSolarPos.elevation}°` : `${hourSolarPos.elevation}°`})</span>
+              </span>
             </div>
             <p className="text-xs text-slate-400 mt-1">
               Micro-view for {dayData.date}. Manage logs, energy scores, and hourly focus notes.

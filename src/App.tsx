@@ -4,6 +4,7 @@ import { resetToDemoData, getDayData } from './utils/storage';
 import { isAnchorDay, formatDateKey } from './utils/dateUtils';
 import { Navbar } from './components/Navbar';
 import { Breadcrumb } from './components/Breadcrumb';
+import { UserDashboard } from './components/UserDashboard';
 import { MonthlyView } from './components/MonthlyView';
 import { WeeklyView } from './components/WeeklyView';
 import { DailyView } from './components/DailyView';
@@ -12,17 +13,18 @@ import { PatternAnalytics } from './components/PatternAnalytics';
 import { LogModals } from './components/LogModals';
 import { AuthErrorModal } from './components/AuthErrorModal';
 import { ApkExportModal } from './components/ApkExportModal';
+import { AuthPage } from './components/AuthPage';
 import { useAuth } from './context/AuthContext';
 import { useFirebaseSync } from './hooks/useFirebaseSync';
-import { CloudCheck, ShieldCheck } from 'lucide-react';
+import { CloudCheck, ShieldCheck, Sun } from 'lucide-react';
 
 export default function App() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { allData, saveDayData, setAllData, isSyncing, cloudSynced } = useFirebaseSync(user);
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedHour, setSelectedHour] = useState<number>(new Date().getHours());
-  const [viewLevel, setViewLevel] = useState<ViewLevel>('day');
+  const [viewLevel, setViewLevel] = useState<ViewLevel>('dashboard');
 
   // Modals state
   const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
@@ -33,6 +35,33 @@ export default function App() {
   const selectedDateStr = formatDateKey(selectedDate);
   const currentDayData = allData[selectedDateStr] || getDayData(selectedDateStr);
   const isAnchorType = isAnchorDay(selectedDate);
+
+  // Loading spinner while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-sky-400 p-0.5 shadow-xl shadow-amber-500/20 mb-4 animate-bounce">
+          <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+            <Sun className="w-7 h-7 text-amber-400 animate-spin-slow" />
+          </div>
+        </div>
+        <h3 className="text-sm font-bold tracking-wider uppercase text-slate-300">
+          Loading Temporal...
+        </h3>
+        <p className="text-xs text-slate-500 mt-1">Initializing Firebase Authentication</p>
+      </div>
+    );
+  }
+
+  // If user is not logged in, render the dedicated Login / Sign Up Page
+  if (!user) {
+    return (
+      <>
+        <AuthPage onContinueAsGuest={() => setViewLevel('dashboard')} />
+        <AuthErrorModal />
+      </>
+    );
+  }
 
   // Updates day data in local state, localStorage, and Firestore if authenticated
   const handleUpdateCurrentDay = (updated: DayData) => {
@@ -122,7 +151,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <span className="flex items-center gap-1.5 font-medium">
               <CloudCheck className="w-4 h-4 text-emerald-400" />
-              <span>Firebase Firestore Sync active for <strong>{user.email}</strong></span>
+              <span>Firebase Firestore Sync active for <strong>{user.email || 'Guest User'}</strong></span>
             </span>
             <span className="text-[11px] text-emerald-400/80 hidden sm:inline flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure User Storage
@@ -131,17 +160,37 @@ export default function App() {
         </div>
       )}
 
-      {/* Cascading Breadcrumb Navigation */}
-      <Breadcrumb
-        selectedDate={selectedDate}
-        selectedHour={selectedHour}
-        viewLevel={viewLevel}
-        onNavigateLevel={setViewLevel}
-        isAnchorDayType={isAnchorType}
-      />
+      {/* Cascading Breadcrumb Navigation (shown on sub-levels) */}
+      {viewLevel !== 'dashboard' && (
+        <Breadcrumb
+          selectedDate={selectedDate}
+          selectedHour={selectedHour}
+          viewLevel={viewLevel}
+          onNavigateLevel={setViewLevel}
+          isAnchorDayType={isAnchorType}
+        />
+      )}
 
       {/* Main Roadmap Workspace */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+        {viewLevel === 'dashboard' && (
+          <UserDashboard
+            dayData={currentDayData}
+            allData={allData}
+            selectedDate={selectedDate}
+            viewLevel={viewLevel}
+            onNavigateLevel={setViewLevel}
+            onSelectDate={setSelectedDate}
+            onSelectHour={handleSelectHour}
+            onOpenQuickLog={handleOpenQuickLog}
+            onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+            onOpenApkModal={() => setIsApkModalOpen(true)}
+            onUpdateDayData={handleUpdateCurrentDay}
+            isSyncing={isSyncing}
+            cloudSynced={cloudSynced}
+          />
+        )}
+
         {viewLevel === 'month' && (
           <MonthlyView
             selectedDate={selectedDate}

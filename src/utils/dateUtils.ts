@@ -107,6 +107,16 @@ export function format12Hour(timeStr: string): string {
   return `${h}:${m} ${ampm}`;
 }
 
+export function formatDateTo12Hour(date: Date | null): string {
+  if (!date || isNaN(date.getTime())) return '--:--';
+  let h = date.getHours();
+  const m = String(date.getMinutes()).padStart(2, '0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  h = h ? h : 12;
+  return `${h}:${m} ${ampm}`;
+}
+
 export function timeToFractionalHours(timeStr: string): number {
   if (!timeStr) return 0;
   const [hStr, mStr] = timeStr.split(':');

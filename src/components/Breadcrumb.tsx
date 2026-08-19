@@ -30,6 +30,20 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
         {/* Cascade path */}
         <nav aria-label="Roadmap level breadcrumb" className="flex items-center flex-wrap gap-1 md:gap-2">
+          {/* Dashboard Hub */}
+          <button
+            onClick={() => onNavigateLevel('dashboard')}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all ${
+              viewLevel === 'dashboard'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <span>Dashboard</span>
+          </button>
+
+          <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+
           {/* Month level */}
           <button
             onClick={() => onNavigateLevel('month')}

@@ -6,6 +6,10 @@ import {
   signInWithPopup, 
   signInAnonymously as firebaseSignInAnonymously,
   signOut as firebaseSignOut, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
   onAuthStateChanged,
   User 
 } from 'firebase/auth';
@@ -85,5 +89,14 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   return errInfo;
 }
 
-export { signInWithPopup, firebaseSignInAnonymously as signInAnonymously, firebaseSignOut as signOut, onAuthStateChanged };
+export { 
+  signInWithPopup, 
+  firebaseSignInAnonymously as signInAnonymously, 
+  firebaseSignOut as signOut, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+  onAuthStateChanged 
+};
 export type { User };

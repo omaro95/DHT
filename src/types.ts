@@ -1,4 +1,4 @@
-export type ViewLevel = 'month' | 'week' | 'day' | 'hour';
+export type ViewLevel = 'dashboard' | 'month' | 'week' | 'day' | 'hour';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
@@ -12,6 +12,7 @@ export interface WaterLog {
   time: string; // HH:mm (24h)
   amountMl: number;
   type?: 'water' | 'tea' | 'coffee' | 'electrolyte';
+  notes?: string;
 }
 
 export interface MealLog {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewLevel } from '../types';
-import { Calendar, ChevronLeft, ChevronRight, Plus, RotateCcw, BarChart3, Sun, Layers, Clock, LogIn, LogOut, CloudCheck, Cloud, Smartphone } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Plus, RotateCcw, BarChart3, Sun, Layers, Clock, LogIn, LogOut, CloudCheck, Cloud, Smartphone, LayoutDashboard } from 'lucide-react';
 import { formatDateKey } from '../utils/dateUtils';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,6 +13,7 @@ interface NavbarProps {
   onOpenAnalytics: () => void;
   onOpenApkModal?: () => void;
   onResetData: () => void;
+  onOpenAuthPage?: () => void;
   isSyncing?: boolean;
   cloudSynced?: boolean;
 }
@@ -26,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAnalytics,
   onOpenApkModal,
   onResetData,
+  onOpenAuthPage,
   isSyncing,
   cloudSynced
 }) => {
@@ -104,8 +106,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* View Level Tabs (Month -> Week -> Day -> Hour) */}
-        <div className="bg-slate-900 border border-slate-800 p-1 rounded-xl flex items-center gap-1 text-xs">
+        {/* View Level Tabs (Dashboard -> Month -> Week -> Day -> Hour) */}
+        <div className="bg-slate-900 border border-slate-800 p-1 rounded-xl flex items-center gap-1 text-xs overflow-x-auto max-w-full">
+          <button
+            onClick={() => onNavigateLevel('dashboard')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
+              viewLevel === 'dashboard'
+                ? 'bg-amber-500 text-slate-950 shadow'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Dashboard</span>
+          </button>
+
           <button
             onClick={() => onNavigateLevel('month')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all ${
@@ -252,11 +266,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={signInWithGoogle}
-                  className="bg-slate-900 border border-slate-700/80 hover:border-sky-500 text-sky-400 hover:text-sky-300 font-semibold px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-sm"
+                  onClick={onOpenAuthPage || signInWithGoogle}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 text-xs"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span>Google Sign In</span>
+                  <span>Sign In / Sign Up</span>
                 </button>
                 <button
                   onClick={signInAsGuest}
